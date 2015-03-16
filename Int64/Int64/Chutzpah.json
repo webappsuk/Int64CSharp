@@ -1,0 +1,9 @@
+﻿{
+    "Tests": [ { "Path": "bin/Debug", "Include": "*Int64.js" } ],
+    "References": [
+        { "Path": "Lib", "Include": "*.js", "Exclude": "*min.js" },
+        { "Path": "bin/Debug", "Include": "*TestUtils.js" },
+        { "Path": "bin/Debug", "Include": "*.js", "Exclude": "*mscorlib.js" }
+    ],
+    "CustomTestHarnessPath": "CustomHarness.html"
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Saltarelle.Jasmine</id>
+    <version>0.0.42</version>
+    <title>Saltarelle.Jasmine</title>
+    <authors>Antonino Porcino</authors>
+    <owners>Antonino Porcino</owners>
+    <projectUrl>https://github.com/nippur72/Saltarelle.Jasmine</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This package contains the required metadata to use Jasmine with the Saltarelle C# to JavaScript compiler. Install this package on the C# saltarelle project.</description>
+  </metadata>
+</package>

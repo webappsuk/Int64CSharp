@@ -1,0 +1,14 @@
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\mscorlib.dll
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\mscorlib.xml
+C:\SourceControl\Int64\Int64\Int64\obj\Debug\Int64.csprojResolveAssemblyReference.cache
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\WebApplications.Saltarelle.JasmineTestUtils.dll
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\Saltarelle.Jasmine.dll
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\WebApplications.Saltarelle.JasmineTestUtils.pdb
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\Saltarelle.Jasmine.xml
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\WebApplications.Saltarelle.JasmineTestUtils.js
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\mscorlib.js
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\Int64.dll
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\Int64.pdb
+C:\SourceControl\Int64\Int64\Int64\bin\Debug\Int64.js
+C:\SourceControl\Int64\Int64\Int64\obj\Debug\Int64.dll
+C:\SourceControl\Int64\Int64\Int64\obj\Debug\Int64.pdb
