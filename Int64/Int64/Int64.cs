@@ -219,16 +219,11 @@ namespace ss
             if (a.Equals(b))
                 return One;
 
-            if (b.Equals(MinValue))
-                return Zero;
+            bool negate = a.IsNegative != b.IsNegative;
 
-            if (b.IsNegative)
-                return -a / -b;
+            UInt64 c = ((UInt64)a.Abs / (UInt64)b.Abs);
 
-            if (a.IsNegative)
-                return -((UInt64)(-a) / (UInt64)b);
-
-            return (Int64)((UInt64)a / (UInt64)b);
+            return negate ? -c : (Int64)c;
         }
 
         public static Int64 operator %(Int64 a, Int64 b)
@@ -239,13 +234,14 @@ namespace ss
             if (a.Equals(Zero))
                 return Zero;
 
-            if (b.IsNegative)
-                return -a % -b;
+            if (a.Equals(b))
+                return Zero;
+            
+            bool negate = a.IsNegative;
 
-            if (a.IsNegative)
-                return -(-a % b);
+            UInt64 c = ((UInt64)a.Abs % (UInt64)b.Abs);
 
-            return (Int64)((UInt64)a % (UInt64)b);
+            return negate ? -c : (Int64)c;
         }
 
         public static Int64 operator &(Int64 a, Int64 b)
@@ -265,21 +261,29 @@ namespace ss
 
         public static Int64 operator <<(Int64 a, int b)
         {
-            b = b & 0x3f;
+            b = b & 63;
+            if (b == 0) return a;
 
-            const int maxShift = 8;
+            int cLow, cMid, cHigh;
 
-            if (b > 8)
-                return (a << maxShift) << (b - maxShift);
-
-            int cLowT = a.Low << b;
-            int cLow = cLowT & 0xffffff;
-            int rLow = (int)((uint)cLowT >> 24) & 0xffffff;
-            int cMidT = (a.Mid << b) | rLow;
-            int cMid = cMidT & 0xffffff;
-            int rMid = (int)((uint)cMidT >> 24) & 0xffff;
-            int cHighT = a.High << b;
-            int cHigh = (cHighT & 0xffff) | rMid;
+            if (b <= 24)
+            {
+                cLow = (a.Low << b);
+                cMid = (a.Low >> (24 - b)) | (a.Mid << b);
+                cHigh = (a.Mid >> (24 - b)) | (a.High << b);
+            }
+            else if (b <= 48)
+            {
+                cLow = 0;
+                cMid = (a.Low << (b - 24));
+                cHigh = (a.Low >> (48 - b)) | (a.Mid << (b - 24));
+            }
+            else
+            {
+                cLow = 0;
+                cMid = 0;
+                cHigh = (a.Low << (b - 48));
+            }
 
             return new Int64(cLow, cMid, cHigh);
         }
@@ -287,15 +291,32 @@ namespace ss
         public static Int64 operator >>(Int64 a, int b)
         {
             // Int64 (signed) uses arithmetic shift, UIn64 (unsigned) uses logical shift
-            if (b == 0)
-                return a;
+            b = b & 63;
+            if (b == 0) return a;
 
-            if (b > 32)
-                return (a >> 32) >> b - 32;
+            int aHigh = a.IsNegative ? unchecked((int)0xffff0000) | a.High : a.High;
+            int cLow, cMid, cHigh;
 
-            return a.IsNegative
-                ? (Int64)((UInt64)a >> b | ((UInt64.MaxValue >> b) << (64 - b)))
-                : (Int64)((UInt64)a >> b);
+            if (b <= 24)
+            {
+                cLow = (a.Mid << (24 - b)) | (a.Low >> b);
+                cMid = (aHigh << (24 - b)) | (a.Mid >> b);
+                cHigh = (aHigh >> b);
+            }
+            else if (b <= 48)
+            {
+                cLow = (aHigh << (48 - b)) | (a.Mid >> (b - 24));
+                cMid = (aHigh >> (b - 24));
+                cHigh = a.IsNegative ? 0xffff : 0;
+            }
+            else
+            {
+                cLow = (aHigh >> (b - 48));
+                cMid = a.IsNegative ? 0xffffff : 0;
+                cHigh = a.IsNegative ? 0xffff : 0;
+            }
+
+            return new Int64(cLow, cMid, cHigh);
         }
 
         public static bool operator ==(Int64 a, Int64 b)
@@ -310,7 +331,7 @@ namespace ss
 
         public static bool operator <=(Int64 a, Int64 b)
         {
-            return a.IsNegative == b.IsNegative ? (UInt64)a <= (UInt64)b : b.IsNegative;
+            return a.IsNegative == b.IsNegative ? (UInt64)a <= (UInt64)b : a.IsNegative;
         }
 
         public static bool operator >=(Int64 a, Int64 b)
@@ -320,7 +341,7 @@ namespace ss
 
         public static bool operator <(Int64 a, Int64 b)
         {
-            return a.IsNegative == b.IsNegative ? (UInt64)a < (UInt64)b : b.IsNegative;
+            return a.IsNegative == b.IsNegative ? (UInt64)a < (UInt64)b : a.IsNegative;
         }
 
         public static bool operator >(Int64 a, Int64 b)
@@ -351,7 +372,7 @@ namespace ss
             int cMid = rLow + a.Mid;
             int rMid = (cMid & Mask) >> 24;
             int cHigh = rMid + a.High;
-
+            
             return new Int64(cLow, cMid, cHigh);
         }
 
