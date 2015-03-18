@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using WebApplications.Saltarelle.JasmineTestUtils;
 
-[assembly:TestAssembly]
+[assembly: TestAssembly]
 
 namespace ss
 {
@@ -58,18 +58,26 @@ namespace ss
             return ToString(format);
         }
 
-        public static Int64 Parse(string text)
+        public static Int64 Parse(string text, int radix = 10)
         {
             Int64 result;
-            if (!TryParse(text, out result))
+            if (!TryParse(text, radix, out result))
                 throw new FormatException("Input string was not in a correct format.");
 
             return result;
         }
 
+        [InlineCode("{$System.Int64}.tryParse({text}, 10, {result})")]
         public static bool TryParse(string text, out Int64 result)
         {
-            const int radix = 10;
+            return TryParse(text, 10, out result);
+        }
+
+        public static bool TryParse(string text, int radix, out Int64 result)
+        {
+            if (radix < 2 || radix > 36)
+                throw new ArgumentOutOfRangeException("radix", "radix argument must be between 2 and 36");
+
             result = Zero;
 
             //if (style & System.Globalization.NumberStyles.AllowHexSpecifier)
@@ -85,7 +93,7 @@ namespace ss
                     neg = true;
                     continue;
                 }
-                Int32 c = Int32.Parse((string) text[i], radix);
+                Int32 c = Int32.Parse((string)text[i], radix);
                 if (Double.IsNaN(c))
                 {
                     result = Zero;
@@ -110,6 +118,13 @@ namespace ss
             return IsNegative
                 ? "-" + ((UInt64)(-this)).ToString(format)
                 : ((UInt64)this).ToString(format);
+        }
+
+        public string ToString(int radix)
+        {
+            return IsNegative
+                ? "-" + ((UInt64)(-this)).ToString(radix)
+                : ((UInt64)this).ToString(radix);
         }
 
         public int CompareTo(Int64 other)
@@ -236,7 +251,7 @@ namespace ss
 
             if (a.Equals(b))
                 return Zero;
-            
+
             bool negate = a.IsNegative;
 
             UInt64 c = ((UInt64)a.Abs % (UInt64)b.Abs);
@@ -372,7 +387,7 @@ namespace ss
             int cMid = rLow + a.Mid;
             int rMid = (cMid & Mask) >> 24;
             int cHigh = rMid + a.High;
-            
+
             return new Int64(cLow, cMid, cHigh);
         }
 
@@ -429,7 +444,7 @@ namespace ss
 
         public static implicit operator Int64(UInt32 a)
         {
-            return new Int64((Int32) a, (Int32) (a >> 24), 0);
+            return new Int64((Int32)a, (Int32)(a >> 24), 0);
         }
 
         public static implicit operator Int64(Int32 a)
@@ -449,9 +464,9 @@ namespace ss
             return a < 0 ? -r : r;
         }
 
-        public static explicit operator Int64(Decimal a)
+        public static Int64 FromDecimal(Decimal a)
         {
-            Int64 r = (Int64)(UInt64)Math.Abs(a);
+            Int64 r = (Int64)(UInt64.FromDecimal(Math.Abs(a)));
             return a < 0 ? -r : r;
         }
 
@@ -503,11 +518,11 @@ namespace ss
                 : (Single)(UInt64)a;
         }
 
-        public static implicit operator Decimal(Int64 a)
+        public static Decimal ToDecimal(Int64 a)
         {
             return a.IsNegative
-                ? -(Decimal)(UInt64)(-a)
-                : (Decimal)(UInt64)a;
+                ? -UInt64.ToDecimal((UInt64)(-a))
+                : UInt64.ToDecimal((UInt64)a);
         }
     }
 }

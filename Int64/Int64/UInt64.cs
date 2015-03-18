@@ -45,18 +45,26 @@ namespace ss
             return ToString(format);
         }
 
-        public static UInt64 Parse(string text)
+        public static UInt64 Parse(string text, int radix = 10)
         {
             UInt64 result;
-            if (!TryParse(text, out result))
+            if (!TryParse(text, radix, out result))
                 throw new FormatException("Input string was not in a correct format.");
 
             return result;
         }
 
+        [InlineCode("{$System.UInt64}.tryParse({text}, 10, {result})")]
         public static bool TryParse(string text, out UInt64 result)
         {
-            const int radix = 10;
+            return TryParse(text, 10, out result);
+        }
+
+        public static bool TryParse(string text, int radix, out UInt64 result)
+        {
+            if (radix < 2 || radix > 36)
+                throw new ArgumentOutOfRangeException("radix", "radix argument must be between 2 and 36");
+            
             result = Zero;
 
             //if (style & System.Globalization.NumberStyles.AllowHexSpecifier)
@@ -100,6 +108,25 @@ namespace ss
                 UInt64 r = a % ten;
                 s = r.Low.ToString() + s;
                 a = a / ten;
+            } while (a > Zero);
+
+            return s;
+        }
+
+        public string ToString(int radix)
+        {
+            if (radix < 2 || radix > 36)
+                throw new ArgumentOutOfRangeException("radix", "radix argument must be between 2 and 36");
+            UInt64 rad = new UInt64(radix, 0 ,0);
+            UInt64 a = this;
+
+            string s = "";
+
+            do
+            {
+                UInt64 r = a % rad;
+                s = r.Low.ToString(radix) + s;
+                a = a / rad;
             } while (a > Zero);
 
             return s;
@@ -554,7 +581,7 @@ namespace ss
             return (UInt64)(double)a;
         }
 
-        public static explicit operator UInt64(Decimal a)
+        public static UInt64 FromDecimal(Decimal a)
         {
             return (UInt64)(double)a;
         }
@@ -603,7 +630,7 @@ namespace ss
             return 16777216f * ((16777216f * a.High) + a.Mid) + a.Low;
         }
 
-        public static implicit operator Decimal(UInt64 a)
+        public static Decimal ToDecimal(UInt64 a)
         {
             return 16777216m * ((16777216m * a.High) + a.Mid) + a.Low;
         }

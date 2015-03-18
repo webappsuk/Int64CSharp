@@ -744,7 +744,7 @@ namespace ss
                                 UInt64 a = UInt64.MaxValue;
                                 UInt64 b = new UInt64(0x1fffb7, 0x9, 0);
 
-                                expect(a / b == new Int64(0x07e3f2, 0x001c0e, 0x0000)).toBe(true);
+                                expect(a / b == new UInt64(0x07e3f2, 0x001c0e, 0x0000)).toBe(true);
                             });
                         });
 
@@ -991,12 +991,12 @@ namespace ss
                         {
                             UInt64 a = UInt64.MaxValue;
 
-                            expect((a >> 32) == new Int64(0xffffff, 0x0000ff, 0x0000)).toBe(true);
+                            expect((a >> 32) == new UInt64(0xffffff, 0x0000ff, 0x0000)).toBe(true);
                         });
 
                         it("UInt64Max >> 33 ", () =>
                         {
-                            UInt64 a = UInt64.MinValue;
+                            UInt64 a = UInt64.MaxValue;
                             Console.WriteLine((a >> 33).ToString());
 
                             expect((a >> 33) == new UInt64(0xffffff, 0x00007f, 0x0000)).toBe(true);
@@ -1004,7 +1004,7 @@ namespace ss
 
                         it("UInt64Max >> 48 ", () =>
                         {
-                            UInt64 a = UInt64.MinValue;
+                            UInt64 a = UInt64.MaxValue;
                             Console.WriteLine((a >> 48).ToString());
 
                             expect((a >> 48) == new UInt64(0x00ffff, 0x000000, 0x0000)).toBe(true);
@@ -1021,7 +1021,7 @@ namespace ss
                         {
                             UInt64 a = UInt32.MaxValue;
 
-                            expect((a >> 24) == new Int64(0x0000ff, 0x000000, 0x0000)).toBe(true);
+                            expect((a >> 24) == new UInt64(0x0000ff, 0x000000, 0x0000)).toBe(true);
                         });
 
                         it("UInt32Max >> 32 ", () =>
@@ -1295,7 +1295,7 @@ namespace ss
                         it("should equal the min value", () =>
                         {
                             Decimal a = UInt32.MinValue;//Decimal.MinValue;
-                            UInt64 b = (UInt64)a;
+                            UInt64 b = UInt64.FromDecimal(a);
 
                             expect(b == UInt64.Zero).toBe(true);
                         });
@@ -1303,7 +1303,7 @@ namespace ss
                         it("should equal the value", () =>
                         {
                             Decimal a = 0;
-                            UInt64 b = (UInt64)a;
+                            UInt64 b = UInt64.FromDecimal(a);
 
                             expect(b == new UInt64(0, 0, 0)).toBe(true);
                         });
@@ -1311,7 +1311,7 @@ namespace ss
                         it("should equal the max value", () =>
                         {
                             Decimal a = UInt32.MaxValue; //Decimal.MaxValue;
-                            UInt64 b = (UInt64)a;
+                            UInt64 b = UInt64.FromDecimal(a);
 
                             expect(b == new UInt64(0xffffff, 0xff, 0)).toBe(true);
                         });

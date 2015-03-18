@@ -1613,7 +1613,7 @@ namespace ss
                         it("should equal the min value", () =>
                         {
                             Decimal a = Int32.MinValue;//Decimal.MinValue;
-                            Int64 b = (Int64)a;
+                            Int64 b = Int64.FromDecimal(a);
 
                             expect(b == new Int64(0, 0xffff80, 0xffff)).toBe(true);
                         });
@@ -1621,7 +1621,7 @@ namespace ss
                         it("should equal the value", () =>
                         {
                             Decimal a = 0;
-                            Int64 b = (Int64)a;
+                            Int64 b = Int64.FromDecimal(a);
 
                             expect(b == new Int64(0, 0, 0)).toBe(true);
                         });
@@ -1629,7 +1629,7 @@ namespace ss
                         it("should equal the max value", () =>
                         {
                             Decimal a = Int32.MaxValue; //Decimal.MaxValue;
-                            Int64 b = (Int64)a;
+                            Int64 b = Int64.FromDecimal(a);
 
                             expect(b == new Int64(0xffffff, 0x7f, 0)).toBe(true);
                         });
